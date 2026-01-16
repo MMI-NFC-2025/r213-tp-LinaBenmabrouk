@@ -1,0 +1,65 @@
+---
+
+---
+
+<header class="bg-linear-to-r from-yellow-400 to-pink-600 text-white py-6 px-6 shadow-lg" role="banner">
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold text-pink-600 no-underline focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 rounded" aria-label="Accueil - Mon Site">Redtryx</a>
+
+            <button 
+                id="burger-btn" 
+                class="lg:hidden text-white focus:outline-none focus:ring-2 focus:ring-white rounded p-1"
+                aria-expanded="false"
+                aria-controls="mobile-menu"
+                aria-label="Menu de navigation"
+            >
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path id="burger-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    <path id="close-icon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+
+            <nav class="hidden lg:flex gap-6" aria-label="Navigation principale">
+                <a href="/" class="text-white no-underline font-medium px-4 py-2 rounded-md transition-all duration-300 bg-white/10 hover:bg-white/25 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-white">
+                    Accueil
+                </a>
+                <a href="/offres" class="text-white no-underline font-medium px-4 py-2 rounded-md transition-all duration-300 bg-white/10 hover:bg-white/25 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-white">
+                    Offres
+                </a>
+            </nav>
+        </div>
+
+        <nav id="mobile-menu" class="hidden lg:hidden mt-4 flex-col gap-3" aria-label="Navigation mobile">
+            <a href="/" class="hover:border-b-2 hover:border-white transition-all duration-300 pb-1 focus:outline-none focus:ring-2 focus:ring-white rounded px-2">
+                Accueil
+            </a>
+            <a href="/offres" class="hover:border-b-2 hover:border-white transition-all duration-300 pb-1 focus:outline-none focus:ring-2 focus:ring-white rounded px-2">
+                Offres
+            </a>
+        </nav>
+    </div>
+</header>
+
+
+<script>
+    const burgerBtn = document.getElementById('burger-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const burgerIcon = document.getElementById('burger-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    burgerBtn?.addEventListener('click', () => {
+        const isExpanded = burgerBtn.getAttribute('aria-expanded') === 'true';
+        burgerBtn.setAttribute('aria-expanded', String(!isExpanded));
+        mobileMenu?.classList.toggle('hidden');
+        mobileMenu?.classList.toggle('flex');   
+        burgerIcon?.classList.toggle('hidden');
+        closeIcon?.classList.toggle('hidden');
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !mobileMenu?.classList.contains('hidden')) {
+            burgerBtn?.click();
+        }
+    });
+</script>
