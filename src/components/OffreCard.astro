@@ -1,16 +1,42 @@
 ---
 const { offre } = Astro.props;
+import { Image } from "astro:assets";
+import heartFilled from '../assets/heart-filled.svg';
+import heartOutline from '../assets/heart-outline.svg';
 ---
 
-<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<div class="bg-white border border-pink-200 rounded-lg shadow-md shadow-pink-200 overflow-hidden">
   <div class="p-4">
-    <h2 class="text-xl font-semibold mb-2">{offre.nomMaison}</h2>
-    <p class="text-gray-600 mb-1">{offre.adresse}</p>
-    <p class="text-gray-800 font-bold mb-2">{offre.prix} € / mois</p>
-    <div class="flex justify-between text-sm text-gray-600">
+    <div class="relative mb-4">
+      <Image src={offre.imgUrl} alt={offre.nomMaison} class="w-full h-50 object-cover rounded-2xl"/>
+
+      <button
+      class="favori-btn absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-all"
+      aria-label="Ajouter aux favoris"
+      data-id={offre.id}
+      data-favori={offre.favori.toString()}>
+      <Image src={offre.favori ? heartFilled : heartOutline} alt="Favori" class="w-6 h-6" />
+    </button>
+
+    </div>
+    <h2 class="text-blue-400 text-4xl font-semibold mb-4">{offre.nomMaison}</h2>
+    <p class="bg-pink-50 text-pink-500 px-3 py-1 rounded-lg inline-block mb-2">{offre.adresse}</p>
+    <p class="text-blue-400 text-2xl font-bold mb-3">{offre.prix} € / mois</p>
+    <div class="bg-pink-50 text-pink-500 rounded-lg px-3 py-1 flex justify-between text-sm">
       <span>{offre.nbChambres} chambres</span>
       <span>{offre.nbSdb} salles de bain</span>
       <span>{offre.surface} m²</span>
     </div>
   </div>
 </div>
+
+<script>
+  const favoriBtn = document.querySelector('.favori-btn') as HTMLElement;
+  
+  if (favoriBtn) {
+    favoriBtn.addEventListener('click', () => {
+      const isFavori = favoriBtn.getAttribute('data-favori') === 'true';
+      favoriBtn.setAttribute('data-favori', String(!isFavori));
+    });
+  }
+</script>

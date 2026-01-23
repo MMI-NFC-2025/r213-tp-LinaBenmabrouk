@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+.heart-filled {
+  color: #EF4444;
+}
+
+.heart-filled img {
+  fill: #EF4444;
+}
+
+.heart-outline img {
+  fill: none;
+  stroke: #EF4444;
+  stroke-width: 2;
+}
