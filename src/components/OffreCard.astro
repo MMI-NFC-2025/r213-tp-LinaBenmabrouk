@@ -1,27 +1,28 @@
 ---
 const { offre } = Astro.props;
-import { Image } from "astro:assets";
+import PbImage from "./PbImage.astro";
 import heartFilled from '../assets/heart-filled.svg';
 import heartOutline from '../assets/heart-outline.svg';
 ---
 
 <div class="bg-white border border-pink-200 rounded-lg shadow-md shadow-pink-200 overflow-hidden">
   <div class="p-4">
-    <div class="relative mb-4">
-      <Image src={offre.imgUrl} alt={offre.nomMaison} class="w-full h-50 object-cover rounded-2xl"/>
+    <div class="relative mb-4 rounded-lg overflow-hidden h-48">
+      <PbImage record={offre} imageField="images" />
 
-      <button
-      class="favori-btn absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-all"
-      aria-label="Ajouter aux favoris"
-      data-id={offre.id}
-      data-favori={offre.favori.toString()}>
-      <Image src={offre.favori ? heartFilled : heartOutline} alt="Favori" class="w-6 h-6" />
+      <button 
+        class="absolute top-3 right-3 z-10 p-2 rounded-full bg-white shadow-md hover:scale-110 transition favorite-btn"
+        data-id={offre.id}
+        data-favori={offre.favori}>
+        <svg class="w-6 h-6 transition-all" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
     </button>
 
     </div>
-    <h2 class="text-blue-400 text-4xl font-semibold mb-4">{offre.nomMaison}</h2>
+    <h2 class="text-blue-400 text-3xl font-semibold mb-4">{offre.nomMaison}</h2>
     <p class="bg-pink-50 text-pink-500 px-3 py-1 rounded-lg inline-block mb-2">{offre.adresse}</p>
-    <p class="text-blue-400 text-2xl font-bold mb-3">{offre.prix} € / mois</p>
+    <p class="text-blue-400 text-xl font-bold mb-3">{offre.prix} € / mois</p>
     <div class="bg-pink-50 text-pink-500 rounded-lg px-3 py-1 flex justify-between text-sm">
       <span>{offre.nbChambres} chambres</span>
       <span>{offre.nbSdb} salles de bain</span>
@@ -31,12 +32,38 @@ import heartOutline from '../assets/heart-outline.svg';
 </div>
 
 <script>
-  const favoriBtn = document.querySelector('.favori-btn') as HTMLElement;
-  
-  if (favoriBtn) {
-    favoriBtn.addEventListener('click', () => {
-      const isFavori = favoriBtn.getAttribute('data-favori') === 'true';
-      favoriBtn.setAttribute('data-favori', String(!isFavori));
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        const id = (btn as HTMLElement).dataset.id;
+        const favori = (btn as HTMLElement).dataset.favori === 'true';
+        const svg = btn.querySelector('svg') as SVGElement;
+
+        const updateHeartStyle = (isFavori: boolean) => {
+            if (isFavori) {
+                svg.classList.add('fill-red-500', 'text-red-500');
+                svg.classList.remove('fill-none', 'text-gray-400');
+            } else {
+                svg.classList.remove('fill-red-500', 'text-red-500');
+                svg.classList.add('fill-none', 'text-gray-400');
+            }
+        };
+
+        updateHeartStyle(favori);
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!svg) return;
+
+            let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+
+            if (favorites.includes(id)) {
+                favorites = favorites.filter((fav: string) => fav !== id);
+                updateHeartStyle(false);
+            } else {
+                favorites.push(id);
+                updateHeartStyle(true);
+            }
+
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        });
     });
-  }
 </script>
