@@ -14,6 +14,7 @@ if (Astro.request.method === "POST") {
         nbSdb: Number(formData.get("nbSdb")),
         nbChambres: Number(formData.get("nbChambres")),
         surface: Number(formData.get("surface")),
+        favori: formData.get("favori") === "on",
         images: formData.get("images")
     };
 
@@ -55,7 +56,11 @@ if (Astro.request.method === "POST") {
                 <input type="number" name="nbSdb" placeholder="Nombre de salles de bain" required min="0" step="1" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
                 <input type="number" name="nbChambres" placeholder="Nombre de chambres" required min="1" step="1" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
                 <input type="number" name="surface" placeholder="Superficie" required min="1" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
-                <input type="file" name="images" accept="image/png, image/jpeg" required class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="favori" name="favori" class="w-5 h-5 cursor-pointer" />
+                    <label for="favori" class="cursor-pointer text-pink-700">Ajouter aux favoris</label>
+                </div>
+                <input type="file" name="images" required class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
                 <button type="submit" class="w-full bg-blue-200 border border-blue-400 shadow-md shadow-pink-200 rounded-lg text-blue-600 py-3 font-bold">Ajouter</button>
             </form>
             {message && <p class="mt-4 p-4 bg-pink-100 text-pink-600 rounded-md text-center">{message}</p>}
