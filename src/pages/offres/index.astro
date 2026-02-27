@@ -3,8 +3,35 @@ import Layout from "../../layouts/Layout.astro";
 import OffreCard from "../../components/OffreCard.astro";
 import { getOffres } from "../../js/backend.mjs";
 
-const offres = await getOffres();
-console.log(offres);
+let offres = await getOffres();
+
+let message = '';
+
+if (Astro.request.method === "POST") {
+    const data = await Astro.request.formData();
+    const minPrixStr = data.get("minPrix");
+    const maxPrixStr = data.get("maxPrix");
+
+    if (minPrixStr && maxPrixStr) {
+        const minPrix = parseInt(minPrixStr.toString());
+        const maxPrix = parseInt(maxPrixStr.toString());
+
+        if (minPrix > 0 && maxPrix > 0 && maxPrix > minPrix) {
+            offres = offres.filter(offre =>
+                parseInt(offre.prix) >= minPrix &&
+                parseInt(offre.prix) <= maxPrix
+            );
+
+            message = offres.length === 0
+                ? `Pas d'offres entre ${minPrix}€ et ${maxPrix}€`
+                : `Liste des offres entre ${minPrix}€ et ${maxPrix}€`;
+        } else {
+            message = "Veuillez entrer des valeurs valides pour le prix.";
+        }
+    } else {
+        message = "Veuillez entrer des valeurs valides pour le prix.";
+    }
+}
 ---
 
 <Layout titre="Offres">
@@ -14,9 +41,22 @@ console.log(offres);
         Offres 🎀
       </h1>
 
-      <button id="favori-button" class="bg-blue-200 border border-blue-400 shadow-md shadow-pink-200 rounded-lg text-blue-600 p-2 mb-6">
-        Afficher les favoris
-      </button>
+      <form action="/offres" method="POST" class="bg-white rounded-lg shadow-lg p-6 mb-6 space-y-4">
+        <div class="flex gap-4 flex-col md:flex-row">
+          <input type="number" name="minPrix" placeholder="Prix minimum" class="flex-1 p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
+          <input type="number" name="maxPrix" placeholder="Prix maximum" class="flex-1 p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
+          <input type="submit" value="Filtrer par prix" class="bg-blue-200 border border-blue-400 shadow-md shadow-pink-200 rounded-lg text-blue-600 p-2 font-bold cursor-pointer" />
+        </div>
+      </form>
+
+      <div class="flex gap-4 mb-6">
+        <a href="/offres/add" class="bg-pink-200 border border-pink-400 shadow-md shadow-pink-200 rounded-lg text-pink-600 p-2">
+          Ajouter une offre
+        </a>
+        <button id="favori-button" class="bg-pink-200 border border-pink-400 shadow-md shadow-pink-200 rounded-lg text-pink-600 p-2">
+          Afficher les favoris
+        </button>
+      </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {

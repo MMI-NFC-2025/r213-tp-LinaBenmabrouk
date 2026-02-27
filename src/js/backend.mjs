@@ -14,6 +14,35 @@ export async function getOffres() {
     }
 }
 
+export async function filterByPrix(minPrix, maxPrix) {
+    try {
+        let data = await db.collection('maison').getFullList({
+            filter: `prix >= ${minPrix} && prix <= ${maxPrix}`,
+            sort: '-created',
+        });
+        return data;
+    } catch (error) {
+        console.log('Une erreur est survenue en filtrant par prix', error);
+        return [];
+    }
+}
+
 export async function getImageUrl(record, recordImage) {
     return db.files.getURL(record, recordImage);
+}
+
+export async function addOffre(formData) {
+    try {
+        await db.collection('maison').create(formData);
+        return {
+            success: true,
+            message: 'Offre ajoutée avec succès'
+        };
+    } catch (error) {
+        console.log('Une erreur est survenue en ajoutant la maison', error);
+        return {
+            success: false,
+            message: 'Une erreur est survenue en ajoutant la maison'
+        };
+    }
 }

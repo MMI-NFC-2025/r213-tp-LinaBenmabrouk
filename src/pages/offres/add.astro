@@ -1,0 +1,64 @@
+---
+import { addOffre } from '../../js/backend.mjs';
+import Layout from '../../layouts/Layout.astro';
+
+let message = "";
+
+if (Astro.request.method === "POST") {
+    const formData = await Astro.request.formData();
+
+    const house = {
+        nomMaison: formData.get("nomMaison")?.toString().trim() || "",
+        adresse: formData.get("adresse")?.toString().trim() || "",
+        prix: Number(formData.get("prix")),
+        nbSdb: Number(formData.get("nbSdb")),
+        nbChambres: Number(formData.get("nbChambres")),
+        surface: Number(formData.get("surface")),
+        images: formData.get("images")
+    };
+
+    const emptyFields = Object.entries(house).filter(([key, value]) =>
+        key !== "images" && (value === "" || value === null || Number.isNaN(value))
+    );
+
+    if (emptyFields.length > 0) {
+        message = "Tous les champs doivent être remplis.";
+    } else if (house.nomMaison.length < 3) {
+        message = "Le nom doit contenir au moins 3 caractères.";
+    } else if (house.prix <= 0) {
+        message = "Le prix doit être supérieur à 0.";
+    } else if (!Number.isInteger(house.nbSdb) || house.nbSdb < 0) {
+        message = "Le nombre de salles de bain doit être un entier positif.";
+    } else if (!Number.isInteger(house.nbChambres) || house.nbChambres <= 0) {
+        message = "Le nombre de chambres doit être supérieur à 0.";
+    } else if (house.surface <= 0) {
+        message = "La superficie doit être supérieure à 0.";
+    } else {
+        const response = await addOffre(house);
+        if (response.success) {
+            return Astro.redirect('/offres');
+        }
+        message = response.message;
+    }
+}
+---
+
+<Layout titre="Ajouter une offre">
+    <div class="py-20 px-6">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-6xl font-bold text-pink-600 text-center mb-8">Ajouter une offre 🏠</h1>
+
+            <form action="/offres/add" method="POST" enctype="multipart/form-data" class="bg-white rounded-lg shadow-lg p-8 space-y-4">
+                <input type="text" name="nomMaison" placeholder="Nom de la maison" required minlength="3" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
+                <input type="text" name="adresse" placeholder="Adresse" required minlength="3" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
+                <input type="number" name="prix" placeholder="Prix" required min="1" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
+                <input type="number" name="nbSdb" placeholder="Nombre de salles de bain" required min="0" step="1" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
+                <input type="number" name="nbChambres" placeholder="Nombre de chambres" required min="1" step="1" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
+                <input type="number" name="surface" placeholder="Superficie" required min="1" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
+                <input type="file" name="images" accept="image/png, image/jpeg" required class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-pink-500" />
+                <button type="submit" class="w-full bg-blue-200 border border-blue-400 shadow-md shadow-pink-200 rounded-lg text-blue-600 py-3 font-bold">Ajouter</button>
+            </form>
+            {message && <p class="mt-4 p-4 bg-pink-100 text-pink-600 rounded-md text-center">{message}</p>}
+        </div>
+    </div>
+</Layout>
