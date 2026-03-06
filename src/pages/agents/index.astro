@@ -1,0 +1,26 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AgentCard from "../../components/AgentCard.astro";
+import { getAgents } from "../../js/backend.mjs";
+
+let agent = await getAgents();
+
+---
+
+<Layout titre="Agents">
+  <section class="py-20 px-6">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-5xl md:text-6xl font-bold text-pink-600 text-center mb-8">
+        Agents 🎀
+      </h1>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {agent.map((agent) => (
+            <div class="agent" data-favori={agent.toString()}>
+              <AgentCard agent={agent} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>

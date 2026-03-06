@@ -8,3 +8,6 @@ export async function getOffre(id) {
     }
 }
 
+export async function setFavori(house) {
+    await db.collection('maison').update(house.id, {favori: !house.favori});
+}

@@ -1,0 +1,13 @@
+---
+const { agent } = Astro.props;
+---
+<div class="bg-white border border-pink-200 rounded-lg shadow-md shadow-pink-200 overflow-hidden">
+  <div class="p-4">
+    <h2 class="text-blue-400 text-3xl font-semibold mb-4">{agent.nom}</h2>
+    <p class="bg-pink-50 text-pink-500 px-3 py-1 rounded-lg inline-block mb-2">{agent.prenom}</p>
+    <p class="text-blue-400 text-xl font-bold mb-3">{agent.email}</p>
+    <a href={`/agents/${agent.offres}`} class="mt-4 inline-block bg-blue-200 border border-blue-400 shadow-md shadow-pink-200 rounded-lg text-blue-600 px-4 py-2">
+      Voir les offres
+    </a>
+  </div>
+</div>
